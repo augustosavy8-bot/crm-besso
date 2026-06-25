@@ -79,8 +79,8 @@ window.Stock = (function () {
     var rows = autos.map(function (a) {
       var nombre = window.UI.esc((a.marca || "") + " " + (a.modelo || ""));
       var sub = window.UI.esc([a.version, a.anio].filter(Boolean).join(" · "));
-      var km = a.km != null ? window.UI.fmtNum(a.km) + " km" : "—";
-      var precio = a.precio != null ? window.UI.fmtMoney(a.precio) : "—";
+      var km = a.km ? window.UI.esc(String(a.km)) : "—";
+      var precio = a.precio ? "$ " + window.UI.esc(String(a.precio)) : "—";
       var badge = ESTADO_BADGE[a.estado] || "badge-gris";
 
       // Miniatura de la foto principal (primera del array) o placeholder.
@@ -146,11 +146,13 @@ window.Stock = (function () {
           fg("modelo", "Modelo *", "text", auto.modelo) +
           fg("version", "Versión", "text", auto.version) +
           fg("anio", "Año", "number", auto.anio) +
-          fg("km", "Kilómetros", "number", auto.km) +
-          fg("precio", "Precio (USD)", "number", auto.precio) +
-          fgSelect("estado", "Estado", ["disponible", "reservado", "vendido"], auto.estado || "disponible") +
-          fg("categoria", "Categoría", "text", auto.categoria) +
-          fg("seccion", "Sección", "text", auto.seccion) +
+          fgSelectKV("tipo", "Tipo (web)", [["usado", "Usado"], ["nuevo", "0km"]], auto.tipo || "usado") +
+          fg("km", "Kilómetros", "text", auto.km) +
+          fg("precio", "Precio", "text", auto.precio) +
+          fgSelect("combustible", "Combustible", ["Nafta", "Diesel", "GNC", "Híbrido", "Eléctrico"], auto.combustible || "Nafta") +
+          fgSelect("transmision", "Transmisión", ["Automático", "Manual", "CVT", "DSG"], auto.transmision || "Automático") +
+          fgSelectKV("seccion", "Sección (web)", [["", "Sin destacar — catálogo general"], ["primer_auto", "Primer Auto"], ["seleccionado", "Seleccionado"], ["multimarca", "Multimarca"]], auto.seccion || "") +
+          fgSelect("estado", "Estado (interno CRM)", ["disponible", "reservado", "vendido"], auto.estado || "disponible") +
           fgTextarea("descripcion", "Descripción", auto.descripcion) +
           // ---- Bloque de fotos ----
           '<div class="fg full">' +
@@ -242,11 +244,13 @@ window.Stock = (function () {
         modelo: f.modelo.value.trim(),
         version: f.version.value.trim(),
         anio: f.anio.value ? parseInt(f.anio.value, 10) : null,
-        km: f.km.value ? parseInt(f.km.value, 10) : null,
-        precio: f.precio.value ? parseFloat(f.precio.value) : null,
-        estado: f.estado.value,
-        categoria: f.categoria.value.trim(),
-        seccion: f.seccion.value.trim(),
+        tipo: f.tipo.value,                  // 'usado' | 'nuevo'  ← filtro/badge de la web
+        km: f.km.value.trim(),               // texto ("45.000 km"), nunca NULL
+        precio: f.precio.value.trim(),       // texto ("24.500.000"), nunca NULL
+        combustible: f.combustible.value,
+        transmision: f.transmision.value,
+        estado: f.estado.value,              // interno CRM (la web oculta 'vendido')
+        seccion: f.seccion.value,            // '' | 'primer_auto' | 'seleccionado' | 'multimarca'
         descripcion: f.descripcion.value.trim(),
         fotos: urls
       };
@@ -406,6 +410,13 @@ window.Stock = (function () {
   function fgSelect(name, label, opts, sel) {
     var o = opts.map(function (op) {
       return '<option value="' + op + '"' + (op === sel ? " selected" : "") + '>' + op + '</option>';
+    }).join("");
+    return '<div class="fg"><label>' + label + '</label><select name="' + name + '">' + o + '</select></div>';
+  }
+  // Igual que fgSelect pero con pares [value, label] (cuando el valor difiere del texto).
+  function fgSelectKV(name, label, pairs, sel) {
+    var o = pairs.map(function (p) {
+      return '<option value="' + window.UI.esc(p[0]) + '"' + (p[0] === sel ? " selected" : "") + '>' + window.UI.esc(p[1]) + '</option>';
     }).join("");
     return '<div class="fg"><label>' + label + '</label><select name="' + name + '">' + o + '</select></div>';
   }
