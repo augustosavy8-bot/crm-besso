@@ -250,7 +250,7 @@ window.Stock = (function () {
         combustible: f.combustible.value,
         transmision: f.transmision.value,
         estado: f.estado.value,              // interno CRM (la web oculta 'vendido')
-        seccion: f.seccion.value,            // '' | 'primer_auto' | 'seleccionado' | 'multimarca'
+        seccion: normSeccion(f.seccion.value), // '' | 'primer_auto' | 'seleccionado' | 'multimarca' (normalizado)
         descripcion: f.descripcion.value.trim(),
         fotos: urls
       };
@@ -413,6 +413,23 @@ window.Stock = (function () {
     }).join("");
     return '<div class="fg"><label>' + label + '</label><select name="' + name + '">' + o + '</select></div>';
   }
+  // Normaliza el valor de "sección" a la KEY exacta que la web usa para filtrar
+  // (renderPrimerAuto/Seleccionados/Categorias). Blinda contra datos sucios:
+  // mayúsculas, espacios o el texto visible de la opción ("MI PRIMER AUTO", etc.).
+  function normSeccion(v) {
+    var k = String(v == null ? "" : v).trim().toLowerCase().replace(/\s+/g, "_");
+    var mapa = {
+      "primer_auto": "primer_auto",
+      "mi_primer_auto": "primer_auto",
+      "seleccionado": "seleccionado",
+      "seleccionados": "seleccionado",
+      "multimarca": "multimarca",
+      "sin_destacar": "",
+      "": ""
+    };
+    return Object.prototype.hasOwnProperty.call(mapa, k) ? mapa[k] : "";
+  }
+
   // Igual que fgSelect pero con pares [value, label] (cuando el valor difiere del texto).
   function fgSelectKV(name, label, pairs, sel) {
     var o = pairs.map(function (p) {
