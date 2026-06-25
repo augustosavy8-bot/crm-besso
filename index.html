@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CRM · Besso Automotores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== PANTALLA DE LOGIN ===================== -->
+  <div id="login-screen" class="login-screen">
+    <form id="login-form" class="login-box" autocomplete="on">
+      <img src="logo-besso.png" alt="José Besso Automóviles" class="login-logo-img" />
+      <div class="login-sub">CRM · Gestión interna</div>
+
+      <div class="login-field">
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" placeholder="tu@correo.com" required autocomplete="email" />
+      </div>
+
+      <div class="login-field">
+        <label for="login-pass">Contraseña</label>
+        <input id="login-pass" type="password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+
+      <div id="login-error" class="login-error" hidden></div>
+
+      <button type="submit" id="login-btn" class="login-btn">Ingresar</button>
+      <p class="login-foot">Acceso solo para el equipo de Besso.</p>
+    </form>
+  </div>
+
+  <!-- ===================== APP ===================== -->
+  <div id="app" class="app" hidden>
+
+    <!-- Backdrop para el sidebar en mobile -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-top">
+        <img src="logo-besso.png" alt="José Besso Automóviles" class="sidebar-logo-img" />
+        <div class="sidebar-logo-sub">CRM</div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-ico">▦</span> Panel
+        </button>
+        <button class="nav-item" data-view="stock">
+          <span class="nav-ico">🚗</span> Stock
+        </button>
+        <button class="nav-item" data-view="leads">
+          <span class="nav-ico">👥</span> Clientes
+        </button>
+        <button class="nav-item" data-view="consultas">
+          <span class="nav-ico">✉</span> Consultas
+          <span class="nav-badge" id="consultas-badge" hidden>0</span>
+        </button>
+        <button class="nav-item nav-solo-dueno" data-view="usuarios" hidden>
+          <span class="nav-ico">★</span> Equipo
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="user-avatar" id="user-avatar">?</div>
+          <div class="user-meta">
+            <div class="user-name" id="user-name">—</div>
+            <div class="user-rol" id="user-rol">—</div>
+          </div>
+        </div>
+        <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+      <header class="topbar">
+        <button id="hamburger" class="hamburger" aria-label="Menú">☰</button>
+        <h1 id="view-title" class="view-title">Panel</h1>
+        <div class="topbar-right">
+          <input id="search-input" class="search-input" type="search" placeholder="Buscar…" hidden />
+        </div>
+      </header>
+
+      <section id="view-container" class="view-container">
+        <!-- Las vistas se inyectan acá -->
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== MODAL GENÉRICO ===================== -->
+  <div id="modal-overlay" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 id="modal-title">Título</h2>
+        <button id="modal-close" class="modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOASTS ===================== -->
+  <div id="toasts" class="toasts"></div>
+
+  <!-- ===================== SCRIPTS (orden de dependencia) ===================== -->
+  <!-- Cliente de Supabase por CDN (UMD clásico, sin módulos) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/stock.js"></script>
+  <script src="js/leads.js"></script>
+  <script src="js/consultas.js"></script>
+  <script src="js/usuarios.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
