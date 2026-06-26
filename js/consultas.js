@@ -69,6 +69,9 @@ window.Consultas = (function () {
     cont.querySelectorAll("[data-lead]").forEach(function (b) {
       b.addEventListener("click", function () { convertirEnLead(b.getAttribute("data-lead")); });
     });
+    cont.querySelectorAll("[data-borrar]").forEach(function (b) {
+      b.addEventListener("click", function () { confirmarBorrar(b.getAttribute("data-borrar")); });
+    });
   }
 
   function tarjeta(c) {
@@ -92,6 +95,10 @@ window.Consultas = (function () {
       acciones += '<button class="btn btn-sm" data-lead="' + c.id + '">Convertir en lead</button>';
     } else {
       acciones += '<span class="cons-gestionada">✓ Gestionada</span>';
+    }
+    // Solo el dueño puede borrar consultas (la RLS también lo restringe).
+    if (window.Auth.esDueno()) {
+      acciones += '<button class="btn btn-danger btn-sm" data-borrar="' + c.id + '">Borrar</button>';
     }
 
     return '<div class="cons-card' + (c.leida || convertida ? '' : ' nueva') + '">' +
@@ -150,6 +157,35 @@ window.Consultas = (function () {
     } catch (e) {
       window.UI.toast("Error al convertir: " + e.message, "err");
     }
+  }
+
+  function confirmarBorrar(id) {
+    var c = _consultas.find(function (x) { return String(x.id) === String(id); });
+    var nombre = (c && c.nombre) ? c.nombre : "esta consulta";
+    var body =
+      '<p style="margin-bottom:20px">¿Seguro que querés borrar la consulta de <strong>' +
+        window.UI.esc(nombre) + '</strong>? Esta acción no se puede deshacer.</p>' +
+      '<div class="form-actions">' +
+        '<button class="btn btn-sec" id="del-cancel">Cancelar</button>' +
+        '<button class="btn btn-danger" id="del-ok">Borrar</button>' +
+      '</div>';
+    window.UI.openModal("Borrar consulta", body);
+    document.getElementById("del-cancel").addEventListener("click", window.UI.closeModal);
+    document.getElementById("del-ok").addEventListener("click", async function () {
+      var btn = this; btn.disabled = true; btn.textContent = "Borrando…";
+      try {
+        await window.Data.Consultas.eliminar(id);
+        _consultas = _consultas.filter(function (x) { return String(x.id) !== String(id); });
+        delete _convertidas[id];
+        window.UI.closeModal();
+        pintar(_consultas);
+        actualizarContador();
+        window.UI.toast("Consulta borrada", "ok");
+      } catch (e) {
+        btn.disabled = false; btn.textContent = "Borrar";
+        window.UI.toast("Error: " + e.message, "err");
+      }
+    });
   }
 
   /* ----------------------- contador del menú lateral ----------------------- */

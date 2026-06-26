@@ -245,6 +245,25 @@ create index if not exists idx_notas_lead     on public.lead_notas(lead_id);
 create index if not exists idx_autos_estado   on public.autos(estado);
 
 -- ============================================================================
+-- 8.b) CONSULTAS — borrado solo para el dueño
+-- ============================================================================
+-- La tabla "consultas" la crea la web pública (formulario de contacto). Acá NO
+-- la creamos: solo agregamos —si existe— la política de DELETE para que únicamente
+-- el dueño pueda borrar consultas desde el CRM. Es aditiva e idempotente; no toca
+-- las políticas de select/insert/update que ya usa la web.
+do $$
+begin
+  if to_regclass('public.consultas') is not null then
+    execute 'alter table public.consultas enable row level security';
+    execute 'drop policy if exists consultas_delete on public.consultas';
+    execute 'create policy consultas_delete on public.consultas
+               for delete to authenticated
+               using ( public.es_dueno() )';
+  end if;
+end
+$$;
+
+-- ============================================================================
 -- 9) STORAGE — bucket "autos" (compartido con la web pública)
 -- ============================================================================
 -- El CRM sube las fotos con el access_token del usuario LOGUEADO (rol

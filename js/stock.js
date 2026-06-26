@@ -151,7 +151,7 @@ window.Stock = (function () {
           fg("precio", "Precio", "text", auto.precio) +
           fgSelect("combustible", "Combustible", ["Nafta", "Diesel", "GNC", "Híbrido", "Eléctrico"], auto.combustible || "Nafta") +
           fgSelect("transmision", "Transmisión", ["Automático", "Manual", "CVT", "DSG"], auto.transmision || "Automático") +
-          fgSelectKV("seccion", "Sección (web)", [["", "Sin destacar — catálogo general"], ["primer_auto", "Primer Auto"], ["seleccionado", "Seleccionado"], ["multimarca", "Multimarca"]], auto.seccion || "") +
+          fgSelectKV("seccion", "Sección (web)", [["", "Sin destacar — catálogo general"], ["primer_auto", "Tu Primer Auto"], ["multimarca", "Multimarca"], ["toyota", "Toyota"], ["suv", "SUV"], ["pickup", "Pick-Up"], ["0km", "0km"], ["motos", "Motos"], ["seleccionado", "Seleccionados"]], auto.seccion || "") +
           fgSelect("estado", "Estado (interno CRM)", ["disponible", "reservado", "vendido"], auto.estado || "disponible") +
           fgTextarea("descripcion", "Descripción", auto.descripcion) +
           // ---- Bloque de fotos ----
@@ -250,7 +250,7 @@ window.Stock = (function () {
         combustible: f.combustible.value,
         transmision: f.transmision.value,
         estado: f.estado.value,              // interno CRM (la web oculta 'vendido')
-        seccion: normSeccion(f.seccion.value), // '' | 'primer_auto' | 'seleccionado' | 'multimarca' (normalizado)
+        seccion: normSeccion(f.seccion.value), // '' | primer_auto | multimarca | toyota | suv | pickup | 0km | motos | seleccionado (normalizado)
         descripcion: f.descripcion.value.trim(),
         fotos: urls
       };
@@ -414,18 +414,21 @@ window.Stock = (function () {
     return '<div class="fg"><label>' + label + '</label><select name="' + name + '">' + o + '</select></div>';
   }
   // Normaliza el valor de "sección" a la KEY exacta que la web usa para filtrar
-  // (renderPrimerAuto/Seleccionados/Categorias). Blinda contra datos sucios:
-  // mayúsculas, espacios o el texto visible de la opción ("MI PRIMER AUTO", etc.).
+  // las secciones (primer_auto, multimarca, toyota, suv, pickup, 0km, motos,
+  // seleccionado). Blinda contra datos sucios: mayúsculas, espacios o el texto
+  // visible de la opción ("Pick-Up", "0 km", "MI PRIMER AUTO", etc.).
   function normSeccion(v) {
     var k = String(v == null ? "" : v).trim().toLowerCase().replace(/\s+/g, "_");
     var mapa = {
-      "primer_auto": "primer_auto",
-      "mi_primer_auto": "primer_auto",
-      "seleccionado": "seleccionado",
-      "seleccionados": "seleccionado",
-      "multimarca": "multimarca",
-      "sin_destacar": "",
-      "": ""
+      "primer_auto": "primer_auto", "mi_primer_auto": "primer_auto", "tu_primer_auto": "primer_auto",
+      "multimarca": "multimarca", "multimarcas": "multimarca",
+      "toyota": "toyota",
+      "suv": "suv", "suvs": "suv",
+      "pickup": "pickup", "pick-up": "pickup", "pick_up": "pickup",
+      "0km": "0km", "0_km": "0km", "0-km": "0km", "okm": "0km",
+      "motos": "motos", "moto": "motos",
+      "seleccionado": "seleccionado", "seleccionados": "seleccionado",
+      "sin_destacar": "", "": ""
     };
     return Object.prototype.hasOwnProperty.call(mapa, k) ? mapa[k] : "";
   }

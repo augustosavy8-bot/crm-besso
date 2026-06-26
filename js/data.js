@@ -128,6 +128,10 @@ window.Data = (function () {
         .eq("leida", false);
       if (res.error) throw new Error(res.error.message);
       return res.count || 0;
+    },
+    // Borrar una consulta. La RLS solo lo permite al dueño (ver schema.sql).
+    async eliminar(id) {
+      return check(await sb().from("consultas").delete().eq("id", id));
     }
   };
 
