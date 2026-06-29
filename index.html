@@ -49,22 +49,20 @@
       </div>
 
       <nav class="nav" id="nav">
-        <button class="nav-item active" data-view="dashboard">
-          <span class="nav-ico">▦</span> Panel
-        </button>
-        <button class="nav-item" data-view="stock">
+        <!-- Panel simple: solo Stock y Consultas. Las demás vistas quedan
+             desactivadas (código intacto) — ver VISTAS_HABILITADAS en app.js. -->
+        <button class="nav-item active" data-view="stock">
           <span class="nav-ico">🚗</span> Stock
-        </button>
-        <button class="nav-item" data-view="leads">
-          <span class="nav-ico">👥</span> Clientes
         </button>
         <button class="nav-item" data-view="consultas">
           <span class="nav-ico">✉</span> Consultas
           <span class="nav-badge" id="consultas-badge" hidden>0</span>
         </button>
-        <button class="nav-item nav-solo-dueno" data-view="usuarios" hidden>
-          <span class="nav-ico">★</span> Equipo
-        </button>
+        <!-- OCULTO (reactivar: descomentar + agregar la key a VISTAS_HABILITADAS):
+        <button class="nav-item" data-view="dashboard"><span class="nav-ico">▦</span> Panel</button>
+        <button class="nav-item" data-view="leads"><span class="nav-ico">👥</span> Clientes</button>
+        <button class="nav-item nav-solo-dueno" data-view="usuarios" hidden><span class="nav-ico">★</span> Equipo</button>
+        -->
       </nav>
 
       <div class="sidebar-bottom">
@@ -83,7 +81,7 @@
     <main class="main">
       <header class="topbar">
         <button id="hamburger" class="hamburger" aria-label="Menú">☰</button>
-        <h1 id="view-title" class="view-title">Panel</h1>
+        <h1 id="view-title" class="view-title">Stock</h1>
         <div class="topbar-right">
           <input id="search-input" class="search-input" type="search" placeholder="Buscar…" hidden />
         </div>

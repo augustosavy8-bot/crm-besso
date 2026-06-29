@@ -91,11 +91,13 @@ window.Consultas = (function () {
     if (waLink) {
       acciones += '<a class="btn wa-btn btn-sm" href="' + waLink + '" target="_blank" rel="noopener">WhatsApp</a>';
     }
-    if (!convertida) {
-      acciones += '<button class="btn btn-sm" data-lead="' + c.id + '">Convertir en lead</button>';
-    } else {
-      acciones += '<span class="cons-gestionada">✓ Gestionada</span>';
-    }
+    // Panel simple: sin pipeline de leads → se quita "Convertir en lead".
+    // (código conservado por si se reactiva)
+    // if (!convertida) {
+    //   acciones += '<button class="btn btn-sm" data-lead="' + c.id + '">Convertir en lead</button>';
+    // } else {
+    //   acciones += '<span class="cons-gestionada">✓ Gestionada</span>';
+    // }
     // Solo el dueño puede borrar consultas (la RLS también lo restringe).
     if (window.Auth.esDueno()) {
       acciones += '<button class="btn btn-danger btn-sm" data-borrar="' + c.id + '">Borrar</button>';

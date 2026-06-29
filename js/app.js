@@ -135,10 +135,12 @@ window.UI = (function () {
 
   var vistaActual = null;
 
+  // Panel simple: solo estas vistas se pueden abrir. El resto (dashboard, leads,
+  // usuarios) queda desactivado sin borrar su código. Reactivar = agregar la key acá.
+  var VISTAS_HABILITADAS = ["stock", "consultas"];
+
   function navegar(vista) {
-    if (!VISTAS[vista]) vista = "dashboard";
-    // Bloquear "usuarios" para no-dueños.
-    if (vista === "usuarios" && !window.Auth.esDueno()) vista = "dashboard";
+    if (!VISTAS[vista] || VISTAS_HABILITADAS.indexOf(vista) === -1) vista = "stock";
 
     vistaActual = vista;
     var def = VISTAS[vista];
@@ -192,7 +194,7 @@ window.UI = (function () {
     document.getElementById("login-screen").hidden = true;
     document.getElementById("app").hidden = false;
     aplicarRol();
-    navegar("dashboard");
+    navegar("stock");
     // Contador de consultas no leídas en el menú lateral.
     try {
       if (window.Consultas && window.Consultas.actualizarContador) {
